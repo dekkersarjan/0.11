@@ -1699,7 +1699,8 @@ bool CWallet::SelectCoins(const CAmount& nTargetValue, set<pair<const CWalletTx*
 }
 
 bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend,
-                                CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet, int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl)
+                                // CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet, int& nChangePosRet, std::string& strFailReason, const CCoinControl* coinControl)
+                                CWalletTx& wtxNew, CReserveKey& reservekey, CAmount& nFeeRet, int& nChangePosRet, std::string& strFailReason, std::string& strTxComment, const CCoinControl* coinControl)
 {
     CAmount nValue = 0;
     unsigned int nSubtractFeeFromAmount = 0;
@@ -1723,6 +1724,12 @@ bool CWallet::CreateTransaction(const vector<CRecipient>& vecSend,
 
     wtxNew.fTimeReceivedIsTxTime = true;
     wtxNew.BindWallet(this);
+
+    // transaction comment
+    wtxNew.strTxComment = strTxComment;
+    if (wtxNew.strTxComment.length() > 30)
+        wtxNew.strTxComment.resize(30);
+
     CMutableTransaction txNew;
 
     // Discourage fee sniping.
